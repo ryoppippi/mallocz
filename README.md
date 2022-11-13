@@ -1,5 +1,5 @@
 # mallocz
-malloc/realloc/free/new/delete wrapper for c/c++ that aborts on failure, implemented in zig  
+malloc/realloc/free & new/delete wrapper for c/c++ that aborts on failure, implemented in zig  
 
 original idea from [zig-gamedev](https://github.com/michal-z/zig-gamedev)  
 
