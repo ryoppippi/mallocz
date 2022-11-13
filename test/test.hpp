@@ -9,5 +9,4 @@ void test_new_forget_delete(void);
 
 #ifdef __cplusplus
 }
-
 #endif
