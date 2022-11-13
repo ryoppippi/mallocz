@@ -10,7 +10,6 @@ extern void free(void *ptr);
 
 #ifdef __cplusplus
 }
-
 #endif
 
 #ifdef __cplusplus
