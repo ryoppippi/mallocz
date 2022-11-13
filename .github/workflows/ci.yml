@@ -14,5 +14,5 @@ jobs:
       - uses: goto-bus-stop/setup-zig@v1
         with:
           version: master
-      - run: zig fmt --check *.zig src/*.zig
-      - run: zig build test
+      - run: zig fmt --check *.zig src/*.zig test/*.zig
+      - run: zig build test -Dtest-filter=success

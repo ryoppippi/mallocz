@@ -18,6 +18,7 @@ pub fn init(config: Config) void {
     assert(mem_allocator == null);
     mem_allocator = config.allocator;
     mem_allocations = std.AutoHashMap(usize, usize).init(config.allocator);
+    check_allocation_count = config.check_allocation_count;
 }
 
 pub fn deinit() void {
@@ -32,16 +33,15 @@ pub fn deinit() void {
 export fn malloc(size: usize) callconv(.C) ?*anyopaque {
     mem_mutex.lock();
     defer mem_mutex.unlock();
-    std.debug.print("malloc({})\n", .{size});
 
     const mem = mem_allocator.?.allocBytes(
         mem_alignment,
         size,
         0,
         @returnAddress(),
-    ) catch @panic("zstbi: out of memory");
+    ) catch @panic("mallocz: out of memory");
 
-    mem_allocations.?.put(@ptrToInt(mem.ptr), size) catch @panic("mallocz:\t" ++ "out of memory");
+    mem_allocations.?.put(@ptrToInt(mem.ptr), size) catch @panic("malloc:\t" ++ "out of memory");
 
     return mem.ptr;
 }
@@ -63,14 +63,14 @@ export fn realloc(ptr: ?*anyopaque, size: usize) callconv(.C) ?*anyopaque {
         mem_alignment,
         0,
         @returnAddress(),
-    ) catch @panic("zstbi: out of memory");
+    ) catch @panic("mallocz: out of memory");
 
     if (ptr != null) {
         const removed = mem_allocations.?.remove(@ptrToInt(ptr.?));
         std.debug.assert(removed);
     }
 
-    mem_allocations.?.put(@ptrToInt(new_mem.ptr), size) catch @panic("mallocz:\t" ++ "out of memory");
+    mem_allocations.?.put(@ptrToInt(new_mem.ptr), size) catch @panic("malloc:\t" ++ "out of memory");
 
     return new_mem.ptr;
 }
@@ -88,5 +88,3 @@ export fn free(maybe_ptr: ?*anyopaque) callconv(.C) void {
         mem_allocator.?.free(mem);
     }
 }
-
-test "test" {}
